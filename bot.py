@@ -1,9 +1,11 @@
+import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-TOKEN = "import os
+TOKEN = os.environ["BOT_TOKEN"]
 
-TOKEN = os.getenv("BOT_TOKEN")"
+PORT = int(os.environ.get("PORT", "10000"))
+HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -15,5 +17,9 @@ app = Application.builder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
 
-print("Bot ishga tushdi...")
-app.run_polling()
+app.run_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    url_path="telegram",
+    webhook_url=f"https://{HOSTNAME}/telegram"
+)
